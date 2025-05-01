@@ -19,7 +19,7 @@ const Navigation: React.FC = () => {
       <div className="container mx-auto p-4">
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-2">
-            <span className="text-2xl font-bold text-medical-500">MediBook</span>
+            <span className="text-2xl font-bold text-medical-500">MediNest</span>
           </Link>
 
           <nav className="hidden md:flex space-x-6">
