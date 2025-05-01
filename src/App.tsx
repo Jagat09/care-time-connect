@@ -3,8 +3,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import Navigation from "./components/Navigation";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -20,6 +20,80 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+// Protected route wrapper for patient-only routes
+const PatientRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, isPatient, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+  }
+  
+  if (!user || !isPatient()) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return <>{children}</>;
+};
+
+// Protected route wrapper for admin-only routes
+const AdminRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, isAdmin, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+  }
+  
+  if (!user || !isAdmin()) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return <>{children}</>;
+};
+
+const AppRoutes = () => {
+  const { isLoading } = useAuth();
+  
+  if (isLoading) {
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+  }
+  
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/doctors" element={<DoctorsList />} />
+      <Route path="/doctor/:id" element={<DoctorDetails />} />
+      <Route path="/book-appointment/:id" element={
+        <PatientRoute>
+          <BookAppointment />
+        </PatientRoute>
+      } />
+      <Route path="/my-appointments" element={
+        <PatientRoute>
+          <MyAppointments />
+        </PatientRoute>
+      } />
+      <Route path="/admin/doctors" element={
+        <AdminRoute>
+          <ManageDoctors />
+        </AdminRoute>
+      } />
+      <Route path="/admin/add-doctor" element={
+        <AdminRoute>
+          <AddDoctor />
+        </AdminRoute>
+      } />
+      <Route path="/admin/appointments" element={
+        <AdminRoute>
+          <ViewAppointments />
+        </AdminRoute>
+      } />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -30,19 +104,7 @@ const App = () => (
           <div className="min-h-screen flex flex-col">
             <Navigation />
             <main className="flex-grow">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/doctors" element={<DoctorsList />} />
-                <Route path="/doctor/:id" element={<DoctorDetails />} />
-                <Route path="/book-appointment/:id" element={<BookAppointment />} />
-                <Route path="/my-appointments" element={<MyAppointments />} />
-                <Route path="/admin/doctors" element={<ManageDoctors />} />
-                <Route path="/admin/add-doctor" element={<AddDoctor />} />
-                <Route path="/admin/appointments" element={<ViewAppointments />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+              <AppRoutes />
             </main>
             <footer className="bg-gray-50 border-t py-8 mt-auto">
               <div className="container mx-auto px-4">

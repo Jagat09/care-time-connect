@@ -6,11 +6,11 @@ import { Button } from "@/components/ui/button";
 import { UserIcon, LogIn, LogOut, Plus, Calendar, User } from "lucide-react";
 
 const Navigation: React.FC = () => {
-  const { user, logout, isAdmin, isPatient } = useAuth();
+  const { user, profile, logout, isAdmin, isPatient } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate("/");
   };
 
@@ -51,8 +51,8 @@ const Navigation: React.FC = () => {
             ) : (
               <div className="flex items-center space-x-4">
                 <div className="hidden md:block">
-                  <div className="text-sm font-medium">{user.name}</div>
-                  <div className="text-xs text-gray-500 capitalize">{user.role}</div>
+                  <div className="text-sm font-medium">{profile?.name}</div>
+                  <div className="text-xs text-gray-500 capitalize">{profile?.role}</div>
                 </div>
                 <Button variant="outline" onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />

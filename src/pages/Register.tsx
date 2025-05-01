@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -16,9 +16,16 @@ const Register: React.FC = () => {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<"patient" | "admin" | null>("patient");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { register } = useAuth();
+  const { register, user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,17 +43,11 @@ const Register: React.FC = () => {
 
     try {
       await register(email, name, password, role);
-      toast({
-        title: "Registration successful",
-        description: "Your account has been created. Welcome to MediBook!",
-      });
+      // Successful registration is handled in the auth context
       navigate("/");
     } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Registration failed",
-        description: error.message || "An error occurred during registration.",
-      });
+      // Error is handled in the auth context
+      console.error("Registration error:", error);
     } finally {
       setIsSubmitting(false);
     }

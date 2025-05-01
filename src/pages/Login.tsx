@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -13,9 +13,16 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,11 +36,8 @@ const Login: React.FC = () => {
       });
       navigate("/");
     } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Login failed",
-        description: error.message || "Please check your credentials and try again.",
-      });
+      // Error is handled in the auth context
+      console.error("Login error:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -104,15 +108,6 @@ const Login: React.FC = () => {
           </CardFooter>
         </form>
       </Card>
-      
-      {/* Demo credentials for testing */}
-      <div className="mt-6 p-4 bg-gray-50 rounded-md border border-gray-100">
-        <h3 className="text-sm font-medium mb-2">Demo Credentials:</h3>
-        <div className="text-xs space-y-1 text-gray-600">
-          <p>Admin: admin@example.com / password</p>
-          <p>Patient: patient@example.com / password</p>
-        </div>
-      </div>
     </div>
   );
 };
