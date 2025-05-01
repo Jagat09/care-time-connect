@@ -109,7 +109,7 @@ const App = () => (
             <footer className="bg-gray-50 border-t py-8 mt-auto">
               <div className="container mx-auto px-4">
                 <div className="text-center text-sm text-gray-600">
-                  <p>&copy; {new Date().getFullYear()} MediBook. All rights reserved.</p>
+                  <p>&copy; {new Date().getFullYear()} MediNest. All rights reserved.</p>
                   <p className="mt-2">A professional doctor appointment booking system.</p>
                 </div>
               </div>
