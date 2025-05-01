@@ -21,7 +21,7 @@ const BookAppointment: React.FC = () => {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { toast } = useToast();
 
   const today = startOfToday();
@@ -91,7 +91,7 @@ const BookAppointment: React.FC = () => {
   }, [selectedDate, id, toast]);
 
   const handleBookAppointment = async () => {
-    if (!user || !doctor || !selectedDate || !selectedTime) {
+    if (!user || !profile || !doctor || !selectedDate || !selectedTime) {
       toast({
         variant: "destructive",
         title: "Incomplete information",
@@ -106,7 +106,7 @@ const BookAppointment: React.FC = () => {
       const appointment = {
         doctorId: doctor.id,
         patientId: user.id,
-        patientName: user.name,
+        patientName: profile.name,
         doctorName: doctor.name,
         date: format(selectedDate, "yyyy-MM-dd"),
         time: selectedTime,
