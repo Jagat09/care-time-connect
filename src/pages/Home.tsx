@@ -71,7 +71,7 @@ const Home: React.FC = () => {
             <div className="relative w-full max-w-md">
               <div className="bg-white rounded-lg shadow-xl overflow-hidden">
                 <img 
-                  src="/placeholder.svg" 
+                  src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
                   alt="Doctor with patient" 
                   className="w-full"
                 />

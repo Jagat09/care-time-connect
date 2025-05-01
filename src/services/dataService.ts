@@ -7,8 +7,8 @@ const doctors: Doctor[] = [
     id: "1",
     name: "Dr. Jane Smith",
     specialty: "Cardiologist",
-    image: "/placeholder.svg",
-    bio: "Dr. Smith is a board-certified cardiologist with over 15 years of experience in treating heart conditions.",
+    image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+    bio: "Dr. Smith is a board-certified cardiologist with over 15 years of experience in treating heart conditions. She specializes in preventative cardiology and heart disease management.",
     availability: {
       "Monday": { start: "09:00", end: "17:00", available: true },
       "Tuesday": { start: "09:00", end: "17:00", available: true },
@@ -23,8 +23,8 @@ const doctors: Doctor[] = [
     id: "2",
     name: "Dr. Robert Chen",
     specialty: "Dermatologist",
-    image: "/placeholder.svg",
-    bio: "Dr. Chen specializes in treating skin conditions and has a special interest in pediatric dermatology.",
+    image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+    bio: "Dr. Chen specializes in treating skin conditions and has a special interest in pediatric dermatology. With his expertise in advanced dermatological procedures, he provides comprehensive care for patients of all ages.",
     availability: {
       "Monday": { start: "08:00", end: "16:00", available: true },
       "Tuesday": { start: "08:00", end: "16:00", available: true },
@@ -39,8 +39,8 @@ const doctors: Doctor[] = [
     id: "3",
     name: "Dr. Maria Garcia",
     specialty: "Pediatrician",
-    image: "/placeholder.svg",
-    bio: "Dr. Garcia has been practicing pediatric medicine for 10 years and is passionate about child healthcare.",
+    image: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+    bio: "Dr. Garcia has been practicing pediatric medicine for 10 years and is passionate about child healthcare. She focuses on developmental pediatrics and preventative care to ensure children grow up healthy and strong.",
     availability: {
       "Monday": { start: "09:00", end: "17:00", available: true },
       "Tuesday": { start: "09:00", end: "17:00", available: true },
@@ -48,6 +48,38 @@ const doctors: Doctor[] = [
       "Thursday": { start: "09:00", end: "17:00", available: false },
       "Friday": { start: "09:00", end: "17:00", available: true },
       "Saturday": { start: "09:00", end: "13:00", available: false },
+      "Sunday": { start: "00:00", end: "00:00", available: false },
+    }
+  },
+  {
+    id: "4",
+    name: "Dr. James Wilson",
+    specialty: "Neurologist",
+    image: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+    bio: "Dr. Wilson is a neurologist with extensive experience in diagnosing and treating conditions affecting the nervous system. He specializes in headache management and neurological disorders.",
+    availability: {
+      "Monday": { start: "09:00", end: "17:00", available: true },
+      "Tuesday": { start: "09:00", end: "17:00", available: true },
+      "Wednesday": { start: "09:00", end: "17:00", available: false },
+      "Thursday": { start: "09:00", end: "17:00", available: true },
+      "Friday": { start: "09:00", end: "17:00", available: true },
+      "Saturday": { start: "00:00", end: "00:00", available: false },
+      "Sunday": { start: "00:00", end: "00:00", available: false },
+    }
+  },
+  {
+    id: "5",
+    name: "Dr. Sarah Johnson",
+    specialty: "Orthopedic Surgeon",
+    image: "https://images.unsplash.com/photo-1527613426441-4da17471b66d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+    bio: "Dr. Johnson is an orthopedic surgeon specializing in sports medicine and joint replacement surgery. Her approach combines the latest surgical techniques with comprehensive rehabilitation plans.",
+    availability: {
+      "Monday": { start: "08:00", end: "16:00", available: true },
+      "Tuesday": { start: "08:00", end: "16:00", available: true },
+      "Wednesday": { start: "08:00", end: "16:00", available: true },
+      "Thursday": { start: "08:00", end: "16:00", available: false },
+      "Friday": { start: "08:00", end: "16:00", available: true },
+      "Saturday": { start: "09:00", end: "12:00", available: true },
       "Sunday": { start: "00:00", end: "00:00", available: false },
     }
   }
