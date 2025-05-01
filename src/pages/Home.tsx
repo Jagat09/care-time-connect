@@ -118,7 +118,7 @@ const Home: React.FC = () => {
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-3xl font-bold mb-6">Ready to Get Started?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Join thousands of patients who have simplified their healthcare journey with MediBook.
+            Join thousands of patients who have simplified their healthcare journey with MediNest.
           </p>
           <Button 
             onClick={handleCTA} 
