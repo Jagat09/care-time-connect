@@ -121,7 +121,7 @@ export async function createOrder(
         .rpc('decrement_medicine_stock', { 
           medicine_id: item.medicineId, 
           quantity: item.quantity 
-        } as any); // Use type assertion to bypass TypeScript's type checking
+        } as { medicine_id: string; quantity: number }); // Use specific type assertion
         
       if (updateError) {
         console.error('Failed to update stock for medicine:', item.medicineId, updateError);
@@ -187,10 +187,14 @@ export async function getUserOrders(userId: string): Promise<Order[]> {
 
 export async function getAllOrders(): Promise<Order[]> {
   try {
-    // First get all orders
+    // First get all orders with user profile information
+    // Fix: Use proper join syntax for Supabase
     const { data: orders, error: ordersError } = await supabase
       .from('medicine_orders')
-      .select('*, profiles(name)')
+      .select(`
+        *,
+        profiles:user_id (name)
+      `)
       .order('created_at', { ascending: false });
       
     if (ordersError) throw ordersError;
@@ -214,7 +218,7 @@ export async function getAllOrders(): Promise<Order[]> {
       shippingAddress: order.shipping_address,
       createdAt: order.created_at,
       updatedAt: order.updated_at,
-      customerName: order.profiles?.name,
+      customerName: (order.profiles as { name: string })?.name,
       items: orderItems
         .filter(item => item.order_id === order.id)
         .map(item => ({
