@@ -116,14 +116,15 @@ export async function createOrder(
     
     // Update stock levels
     for (const item of items) {
-      // Fix: Use a more appropriate type assertion with unknown first
+      // Create a properly typed parameter object for the RPC call
       const params = {
         medicine_id: item.medicineId,
         quantity: item.quantity
       };
       
+      // Use the parameters object with a type assertion that works with the RPC method
       const { error: updateError } = await supabase
-        .rpc('decrement_medicine_stock', params as unknown as Record<string, unknown>);
+        .rpc('decrement_medicine_stock', params as any);
         
       if (updateError) {
         console.error('Failed to update stock for medicine:', item.medicineId, updateError);
