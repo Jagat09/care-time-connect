@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Medicine, Order, OrderItem } from "../types/medicine";
 
@@ -213,7 +212,7 @@ export async function getAllOrders(): Promise<Order[]> {
       shippingAddress: order.shipping_address,
       createdAt: order.created_at,
       updatedAt: order.updated_at,
-      customerName: order.profiles?.name,
+      customerName: (orders[0] as any)?.profiles?.name,
       items: orderItems
         .filter(item => item.order_id === order.id)
         .map(item => ({
