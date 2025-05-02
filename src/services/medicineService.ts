@@ -116,12 +116,14 @@ export async function createOrder(
     
     // Update stock levels
     for (const item of items) {
-      // Fix: Use proper type assertion that works with TypeScript
+      // Fix: Use a more appropriate type assertion with unknown first
+      const params = {
+        medicine_id: item.medicineId,
+        quantity: item.quantity
+      };
+      
       const { error: updateError } = await supabase
-        .rpc('decrement_medicine_stock', {
-          medicine_id: item.medicineId,
-          quantity: item.quantity
-        } as Record<string, unknown>);
+        .rpc('decrement_medicine_stock', params as unknown as Record<string, unknown>);
         
       if (updateError) {
         console.error('Failed to update stock for medicine:', item.medicineId, updateError);
@@ -187,12 +189,12 @@ export async function getUserOrders(userId: string): Promise<Order[]> {
 
 export async function getAllOrders(): Promise<Order[]> {
   try {
-    // Fix: Adjust the query to properly join medicine_orders with profiles
+    // Fix: Modify the query to correctly join profiles
     const { data: orders, error: ordersError } = await supabase
       .from('medicine_orders')
       .select(`
         *,
-        profiles:user_id(name)
+        profiles(name)
       `)
       .order('created_at', { ascending: false });
       
@@ -210,16 +212,18 @@ export async function getAllOrders(): Promise<Order[]> {
     
     // Convert to our interface format and merge the data
     const formattedOrders: Order[] = orders.map(order => {
-      // Fix: Properly handle null and type check profiles
       let customerName: string | undefined = undefined;
       
+      // Fix: Proper type checking and null handling for profiles data
       if (order.profiles) {
-        // Safely cast profiles to an object type we can work with
-        const profileData = order.profiles as Record<string, unknown>;
-        if (profileData && typeof profileData === 'object' && 'name' in profileData) {
-          const nameValue = profileData.name;
-          if (typeof nameValue === 'string') {
-            customerName = nameValue;
+        // First cast to unknown, then to the expected type structure
+        const profileData = order.profiles as unknown;
+        
+        if (profileData && typeof profileData === 'object') {
+          // Now check if it has a name property
+          const profileObj = profileData as { name?: string };
+          if (profileObj.name && typeof profileObj.name === 'string') {
+            customerName = profileObj.name;
           }
         }
       }
