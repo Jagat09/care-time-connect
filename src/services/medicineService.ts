@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Medicine, Order, OrderItem } from "../types/medicine";
 
@@ -116,12 +115,12 @@ export async function createOrder(
     
     // Update stock levels
     for (const item of items) {
-      // Fix: Use a more explicit type assertion 
+      // Fix: Properly type the RPC parameters by first asserting to unknown then to a record
       const { error: updateError } = await supabase
         .rpc('decrement_medicine_stock', { 
           medicine_id: item.medicineId, 
           quantity: item.quantity 
-        } as unknown as Record<string, unknown>); // More generic type assertion
+        } as unknown as Record<string, unknown>);
         
       if (updateError) {
         console.error('Failed to update stock for medicine:', item.medicineId, updateError);
@@ -187,12 +186,12 @@ export async function getUserOrders(userId: string): Promise<Order[]> {
 
 export async function getAllOrders(): Promise<Order[]> {
   try {
-    // Fix: Adjust the query to properly relate medicine_orders to profiles
+    // Fix: Adjust the query to properly join medicine_orders with profiles
     const { data: orders, error: ordersError } = await supabase
       .from('medicine_orders')
       .select(`
         *,
-        profiles(name)
+        profiles:user_id(name)
       `)
       .order('created_at', { ascending: false });
       
@@ -209,28 +208,35 @@ export async function getAllOrders(): Promise<Order[]> {
     if (itemsError) throw itemsError;
     
     // Convert to our interface format and merge the data
-    const formattedOrders: Order[] = orders.map(order => ({
-      id: order.id,
-      userId: order.user_id,
-      status: order.status as 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled',
-      totalAmount: order.total_amount,
-      shippingAddress: order.shipping_address,
-      createdAt: order.created_at,
-      updatedAt: order.updated_at,
-      // Fix: Safely access the profile name with proper type handling
-      customerName: order.profiles ? (order.profiles as { name: string }).name : undefined,
-      items: orderItems
-        .filter(item => item.order_id === order.id)
-        .map(item => ({
-          id: item.id,
-          orderId: item.order_id,
-          medicineId: item.medicine_id,
-          medicineName: item.medicines?.name,
-          quantity: item.quantity,
-          pricePerUnit: item.price_per_unit,
-          totalPrice: item.total_price
-        }))
-    }));
+    const formattedOrders: Order[] = orders.map(order => {
+      // Fix: Handle potential SelectQueryError by safely checking and casting
+      let customerName: string | undefined = undefined;
+      if (order.profiles && typeof order.profiles === 'object' && 'name' in order.profiles) {
+        customerName = order.profiles.name as string;
+      }
+
+      return {
+        id: order.id,
+        userId: order.user_id,
+        status: order.status as 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled',
+        totalAmount: order.total_amount,
+        shippingAddress: order.shipping_address,
+        createdAt: order.created_at,
+        updatedAt: order.updated_at,
+        customerName,
+        items: orderItems
+          .filter(item => item.order_id === order.id)
+          .map(item => ({
+            id: item.id,
+            orderId: item.order_id,
+            medicineId: item.medicine_id,
+            medicineName: item.medicines?.name,
+            quantity: item.quantity,
+            pricePerUnit: item.price_per_unit,
+            totalPrice: item.total_price
+          }))
+      };
+    });
     
     return formattedOrders;
   } catch (error) {
@@ -253,4 +259,3 @@ export async function updateOrderStatus(orderId: string, status: string) {
     throw error;
   }
 }
-
