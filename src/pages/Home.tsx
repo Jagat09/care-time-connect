@@ -1,10 +1,13 @@
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "../context/AuthContext";
-import { Calendar, User, Clock, CheckCircle } from "lucide-react";
+import { Calendar, User, Clock, CheckCircle, Pills } from "lucide-react";
+import { getMedicines } from "@/services/medicineService";
+import MedicineCard from "@/components/MedicineCard";
 
 const features = [
   {
@@ -23,15 +26,22 @@ const features = [
     description: "No more waiting on the phone. Schedule and manage your appointments online anytime."
   },
   {
-    icon: <CheckCircle className="h-6 w-6 text-medical-500" />,
-    title: "Patient-Centered Care",
-    description: "Our doctors are committed to providing personalized care focused on your well-being."
+    icon: <Pills className="h-6 w-6 text-medical-500" />,
+    title: "Online Pharmacy",
+    description: "Order medicines online and get them delivered to your doorstep. Quick, convenient, and reliable."
   }
 ];
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const { user, isPatient, isAdmin } = useAuth();
+  
+  // Fetch featured medicines
+  const { data: medicines, isLoading: loadingMedicines } = useQuery({
+    queryKey: ["medicines", "featured"],
+    queryFn: () => getMedicines().then(data => data.slice(0, 4)), // Get first 4 medicines
+    enabled: true
+  });
 
   const handleCTA = () => {
     if (!user) {
@@ -41,6 +51,10 @@ const Home: React.FC = () => {
     } else {
       navigate("/doctors");
     }
+  };
+  
+  const handleMedicineCTA = () => {
+    navigate("/medicines");
   };
 
   return (
@@ -90,7 +104,7 @@ const Home: React.FC = () => {
       {/* Features Section */}
       <div className="py-16 px-4 container mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Why Choose MediBook</h2>
+          <h2 className="text-3xl font-bold mb-4">Why Choose MediNest</h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
             Our platform makes healthcare accessible and convenient by connecting patients with qualified healthcare providers.
           </p>
@@ -111,6 +125,44 @@ const Home: React.FC = () => {
             </Card>
           ))}
         </div>
+      </div>
+      
+      {/* Featured Medicines Section */}
+      <div className="py-16 px-4 container mx-auto bg-gray-50">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold mb-4">Featured Medicines</h2>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            Browse our selection of high-quality medicines available for online purchase.
+          </p>
+        </div>
+        
+        {loadingMedicines ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[...Array(4)].map((_, idx) => (
+              <div key={idx} className="bg-white rounded-lg h-80 animate-pulse"></div>
+            ))}
+          </div>
+        ) : medicines && medicines.length > 0 ? (
+          <>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {medicines.map(medicine => (
+                <MedicineCard key={medicine.id} medicine={medicine} />
+              ))}
+            </div>
+            <div className="text-center mt-10">
+              <Button size="lg" onClick={handleMedicineCTA}>
+                View All Medicines
+              </Button>
+            </div>
+          </>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-xl text-gray-600">No medicines available at the moment.</p>
+            <Button className="mt-4" onClick={handleMedicineCTA}>
+              Explore Medicines
+            </Button>
+          </div>
+        )}
       </div>
       
       {/* CTA Section */}
