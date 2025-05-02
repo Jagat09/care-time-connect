@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -16,10 +15,10 @@ import { ArrowLeft } from 'lucide-react';
 
 const medicineSchema = z.object({
   name: z.string().min(1, 'Medicine name is required'),
-  description: z.string().optional(),
+  description: z.string().nullable(),
   price: z.coerce.number().min(0.01, 'Price must be greater than 0'),
   stock: z.coerce.number().int().min(0, 'Stock cannot be negative'),
-  image: z.string().optional(),
+  image: z.string().nullable(),
 });
 
 type MedicineFormData = z.infer<typeof medicineSchema>;
@@ -66,7 +65,17 @@ const AddEditMedicine: React.FC = () => {
   
   // Create medicine mutation
   const createMedicineMutation = useMutation({
-    mutationFn: createMedicine,
+    mutationFn: (medicine: Omit<MedicineFormData, 'id' | 'created_at'>) => {
+      // Ensure we provide null values for nullable fields if they're undefined
+      const medicineData = {
+        name: medicine.name,
+        description: medicine.description || null,
+        price: medicine.price,
+        stock: medicine.stock,
+        image: medicine.image || null
+      };
+      return createMedicine(medicineData);
+    },
     onSuccess: () => {
       toast({
         title: 'Medicine created',

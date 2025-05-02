@@ -1,11 +1,10 @@
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "../context/AuthContext";
-import { Calendar, User, Clock, CheckCircle, Pills } from "lucide-react";
+import { Calendar, User, Clock, CheckCircle, Pill } from "lucide-react";
 import { getMedicines } from "@/services/medicineService";
 import MedicineCard from "@/components/MedicineCard";
 
@@ -26,7 +25,7 @@ const features = [
     description: "No more waiting on the phone. Schedule and manage your appointments online anytime."
   },
   {
-    icon: <Pills className="h-6 w-6 text-medical-500" />,
+    icon: <Pill className="h-6 w-6 text-medical-500" />,
     title: "Online Pharmacy",
     description: "Order medicines online and get them delivered to your doorstep. Quick, convenient, and reliable."
   }

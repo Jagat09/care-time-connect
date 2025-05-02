@@ -22,6 +22,7 @@ export interface Order {
   shippingAddress: string;
   createdAt: string;
   updatedAt: string;
+  customerName?: string;
   items: OrderItem[];
 }
 

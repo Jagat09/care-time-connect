@@ -1,10 +1,9 @@
-
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { Button } from "@/components/ui/button";
-import { UserIcon, LogIn, LogOut, Plus, Calendar, User, Pills, Package, ShoppingCart } from "lucide-react";
+import { UserIcon, LogIn, LogOut, Plus, Calendar, User, Pill, Package, ShoppingCart } from "lucide-react";
 
 const Navigation: React.FC = () => {
   const { user, profile, logout, isAdmin, isPatient } = useAuth();
@@ -98,7 +97,7 @@ const Navigation: React.FC = () => {
                 <span className="text-xs mt-1">Doctors</span>
               </Link>
               <Link to="/medicines" className="flex flex-col items-center p-2 text-gray-700">
-                <Pills className="h-5 w-5" />
+                <Pill className="h-5 w-5" />
                 <span className="text-xs mt-1">Medicines</span>
               </Link>
               {isPatient() && (
@@ -116,7 +115,7 @@ const Navigation: React.FC = () => {
               {isAdmin() && (
                 <>
                   <Link to="/admin/medicines" className="flex flex-col items-center p-2 text-gray-700">
-                    <Pills className="h-5 w-5" />
+                    <Pill className="h-5 w-5" />
                     <span className="text-xs mt-1">Medicines</span>
                   </Link>
                   <Link to="/admin/medicine-orders" className="flex flex-col items-center p-2 text-gray-700">

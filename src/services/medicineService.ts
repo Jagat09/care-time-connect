@@ -159,7 +159,7 @@ export async function getUserOrders(userId: string): Promise<Order[]> {
     const formattedOrders: Order[] = orders.map(order => ({
       id: order.id,
       userId: order.user_id,
-      status: order.status,
+      status: order.status as 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled',
       totalAmount: order.total_amount,
       shippingAddress: order.shipping_address,
       createdAt: order.created_at,
@@ -189,7 +189,7 @@ export async function getAllOrders(): Promise<Order[]> {
     // First get all orders
     const { data: orders, error: ordersError } = await supabase
       .from('medicine_orders')
-      .select('*, profiles(name)')
+      .select('*, profiles:user_id(name)')
       .order('created_at', { ascending: false });
       
     if (ordersError) throw ordersError;
@@ -208,7 +208,7 @@ export async function getAllOrders(): Promise<Order[]> {
     const formattedOrders: Order[] = orders.map(order => ({
       id: order.id,
       userId: order.user_id,
-      status: order.status,
+      status: order.status as 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled',
       totalAmount: order.total_amount,
       shippingAddress: order.shipping_address,
       createdAt: order.created_at,

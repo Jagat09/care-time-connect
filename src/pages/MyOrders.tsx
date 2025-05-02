@@ -15,12 +15,14 @@ const MyOrders: React.FC = () => {
     queryKey: ["orders", user?.id],
     queryFn: () => getUserOrders(user!.id),
     enabled: !!user,
-    onError: () => {
-      toast({
-        variant: "destructive",
-        title: "Failed to load orders",
-        description: "Could not retrieve your order history. Please try again later."
-      });
+    meta: {
+      onError: () => {
+        toast({
+          variant: "destructive",
+          title: "Failed to load orders",
+          description: "Could not retrieve your order history. Please try again later."
+        });
+      }
     }
   });
 
