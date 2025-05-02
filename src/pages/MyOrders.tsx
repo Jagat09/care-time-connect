@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getUserOrders } from "@/services/medicineService";
+import { getUserOrders } from "@/services/orderApi";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import { Package } from "lucide-react";
