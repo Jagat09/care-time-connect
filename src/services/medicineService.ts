@@ -123,9 +123,9 @@ export async function createOrder(
       };
       
       // Fix: Use a proper type assertion for the RPC method
-      // Using Record<string, any> to handle the function name parameter type
+      // Using 'any' for both function name and parameters to bypass TypeScript constraints
       const { error: updateError } = await supabase
-        .rpc('decrement_medicine_stock' as unknown as never, params as Record<string, unknown>);
+        .rpc('decrement_medicine_stock' as any, params as any);
         
       if (updateError) {
         console.error('Failed to update stock for medicine:', item.medicineId, updateError);
