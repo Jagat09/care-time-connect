@@ -116,12 +116,12 @@ export async function createOrder(
     
     // Update stock levels
     for (const item of items) {
-      // Fix: Type the parameters correctly for the RPC function
+      // Fix: Use a more explicit type assertion 
       const { error: updateError } = await supabase
         .rpc('decrement_medicine_stock', { 
           medicine_id: item.medicineId, 
           quantity: item.quantity 
-        } as { medicine_id: string; quantity: number }); // Use specific type assertion
+        } as unknown as Record<string, unknown>); // More generic type assertion
         
       if (updateError) {
         console.error('Failed to update stock for medicine:', item.medicineId, updateError);
@@ -187,13 +187,12 @@ export async function getUserOrders(userId: string): Promise<Order[]> {
 
 export async function getAllOrders(): Promise<Order[]> {
   try {
-    // First get all orders with user profile information
-    // Fix: Use proper join syntax for Supabase
+    // Fix: Adjust the query to properly relate medicine_orders to profiles
     const { data: orders, error: ordersError } = await supabase
       .from('medicine_orders')
       .select(`
         *,
-        profiles:user_id (name)
+        profiles(name)
       `)
       .order('created_at', { ascending: false });
       
@@ -218,7 +217,8 @@ export async function getAllOrders(): Promise<Order[]> {
       shippingAddress: order.shipping_address,
       createdAt: order.created_at,
       updatedAt: order.updated_at,
-      customerName: (order.profiles as { name: string })?.name,
+      // Fix: Safely access the profile name with proper type handling
+      customerName: order.profiles ? (order.profiles as { name: string }).name : undefined,
       items: orderItems
         .filter(item => item.order_id === order.id)
         .map(item => ({
@@ -253,3 +253,4 @@ export async function updateOrderStatus(orderId: string, status: string) {
     throw error;
   }
 }
+
