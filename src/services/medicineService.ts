@@ -116,13 +116,14 @@ export async function createOrder(
     
     // Update stock levels
     for (const item of items) {
-      // Create a properly typed parameter object for the RPC call
+      // Define the parameters with proper types for the RPC call
       const params = {
         medicine_id: item.medicineId,
         quantity: item.quantity
       };
       
-      // Use the parameters object with a type assertion that works with the RPC method
+      // Call the RPC method with the correct type
+      // We need to cast to 'any' here as the TypeScript definitions for the RPC method might be missing
       const { error: updateError } = await supabase
         .rpc('decrement_medicine_stock', params as any);
         
