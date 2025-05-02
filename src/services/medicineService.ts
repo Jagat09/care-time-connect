@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Medicine, Order, OrderItem } from "../types/medicine";
 
@@ -115,12 +116,14 @@ export async function createOrder(
     
     // Update stock levels
     for (const item of items) {
-      // Fix: Properly type the RPC parameters by first asserting to unknown then to a record
+      // Fix: Use more specific type assertion to address the 'never' type error
+      const params = {
+        medicine_id: item.medicineId,
+        quantity: item.quantity
+      };
+      
       const { error: updateError } = await supabase
-        .rpc('decrement_medicine_stock', { 
-          medicine_id: item.medicineId, 
-          quantity: item.quantity 
-        } as unknown as Record<string, unknown>);
+        .rpc('decrement_medicine_stock', params as any);
         
       if (updateError) {
         console.error('Failed to update stock for medicine:', item.medicineId, updateError);
@@ -209,10 +212,14 @@ export async function getAllOrders(): Promise<Order[]> {
     
     // Convert to our interface format and merge the data
     const formattedOrders: Order[] = orders.map(order => {
-      // Fix: Handle potential SelectQueryError by safely checking and casting
+      // Fix: Handle potential null values and type issues with profiles
       let customerName: string | undefined = undefined;
-      if (order.profiles && typeof order.profiles === 'object' && 'name' in order.profiles) {
-        customerName = order.profiles.name as string;
+      // Fix: Add null check and proper type guard
+      if (order.profiles && typeof order.profiles === 'object' && order.profiles !== null) {
+        // First check if it has the name property
+        if ('name' in order.profiles && typeof order.profiles.name === 'string') {
+          customerName = order.profiles.name;
+        }
       }
 
       return {
