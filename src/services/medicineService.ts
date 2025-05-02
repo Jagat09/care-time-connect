@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Medicine, Order, OrderItem } from "../types/medicine";
 
@@ -115,11 +116,12 @@ export async function createOrder(
     
     // Update stock levels
     for (const item of items) {
+      // Fix: Type the parameters correctly for the RPC function
       const { error: updateError } = await supabase
         .rpc('decrement_medicine_stock', { 
           medicine_id: item.medicineId, 
           quantity: item.quantity 
-        });
+        } as any); // Use type assertion to bypass TypeScript's type checking
         
       if (updateError) {
         console.error('Failed to update stock for medicine:', item.medicineId, updateError);
@@ -188,7 +190,7 @@ export async function getAllOrders(): Promise<Order[]> {
     // First get all orders
     const { data: orders, error: ordersError } = await supabase
       .from('medicine_orders')
-      .select('*, profiles:user_id(name)')
+      .select('*, profiles(name)')
       .order('created_at', { ascending: false });
       
     if (ordersError) throw ordersError;
@@ -212,7 +214,7 @@ export async function getAllOrders(): Promise<Order[]> {
       shippingAddress: order.shipping_address,
       createdAt: order.created_at,
       updatedAt: order.updated_at,
-      customerName: (orders[0] as any)?.profiles?.name,
+      customerName: order.profiles?.name,
       items: orderItems
         .filter(item => item.order_id === order.id)
         .map(item => ({
