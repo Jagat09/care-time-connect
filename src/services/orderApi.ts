@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Order, OrderItem } from "../types/medicine";
 
@@ -37,12 +38,16 @@ export async function createOrder(
     
     // Update stock levels
     for (const item of items) {
-      // Use type assertion with 'any' to fix TypeScript error
-      const { error: updateError } = await supabase
-        .rpc('decrement_medicine_stock' as any, {
-          medicine_id: item.medicineId,
-          quantity: item.quantity
-        } as any);
+      // Use a more compatible approach with TypeScript for RPC calls
+      const { error: updateError } = await supabase.functions.invoke(
+        'decrement-medicine-stock-rpc', 
+        {
+          body: {
+            medicine_id: item.medicineId,
+            quantity: item.quantity
+          }
+        }
+      );
         
       if (updateError) {
         console.error('Failed to update stock for medicine:', item.medicineId, updateError);
