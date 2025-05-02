@@ -65,7 +65,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, isAdmin = false, onStatusC
                 {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
               </Badge>
             )}
-            <p className="text-lg font-bold mt-1">${order.totalAmount.toFixed(2)}</p>
+            <p className="text-lg font-bold mt-1">₹{order.totalAmount.toFixed(2)}</p>
           </div>
         </div>
       </CardHeader>
@@ -83,7 +83,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, isAdmin = false, onStatusC
                   <span>
                     {item.quantity} x {item.medicineName || "Unknown Product"}
                   </span>
-                  <span>${item.totalPrice.toFixed(2)}</span>
+                  <span>₹{item.totalPrice.toFixed(2)}</span>
                 </div>
               ))}
             </div>
