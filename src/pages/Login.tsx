@@ -32,7 +32,7 @@ const Login: React.FC = () => {
       await login(email, password);
       toast({
         title: "Login successful",
-        description: "Welcome back to MediBook!",
+        description: "Welcome back to MediNest!",
       });
       navigate("/");
     } catch (error: any) {
